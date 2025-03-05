@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Flipkart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 text-white p-4 text-center text-2xl font-bold">
+        Flipkart - Shopping Cart
+    </header>
+    <div class="container mx-auto p-4">
+        <h2 class="text-xl font-bold mb-4">Your Cart</h2>
+        <ul id="cart-items" class="bg-white p-4 rounded shadow-md">
+            <!-- Cart items will be dynamically inserted here -->
+        </ul>
+        <div class="mt-4">
+            <p class="text-lg font-semibold">Total: $<span id="cart-total">0.00</span></p>
+            <button class="bg-green-600 text-white px-4 py-2 rounded mt-2" id="checkout-btn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const cartItemsContainer = document.getElementById("cart-items");
+            const cartTotal = document.getElementById("cart-total");
+            
+            function renderCart() {
+                cartItemsContainer.innerHTML = "";
+                let total = 0;
+                cart.forEach((item, index) => {
+                    let li = document.createElement("li");
+                    li.className = "flex justify-between p-2 border-b";
+                    li.innerHTML = `${item.name} - $${item.price} <button class='text-red-600' onclick='removeItem(${index})'>Remove</button>`;
+                    cartItemsContainer.appendChild(li);
+                    total += parseFloat(item.price);
+                });
+                cartTotal.textContent = total.toFixed(2);
+            }
+
+            window.removeItem = function (index) {
+                cart.splice(index, 1);
+                localStorage.setItem("cart", JSON.stringify(cart));
+                renderCart();
+            };
+
+            document.getElementById("checkout-btn").addEventListener("click", function () {
+                if (cart.length === 0) {
+                    alert("Your cart is empty!");
+                    return;
+                }
+                alert("Proceeding to checkout...");
+                localStorage.removeItem("cart");
+                cart = [];
+                renderCart();
+            });
+
+            renderCart();
+        });
+    </script>
+</body>
+</html>

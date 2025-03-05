@@ -1,0 +1,18 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar */
+nav input {
+    width: 250px;
+}
+
+/* Product Card */
+.add-to-cart {
+    transition: background 0.3s ease-in-out;
+}
+
+.add-to-cart:hover {
+    background: #2563eb;
+}
