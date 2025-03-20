@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Event at LPU</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #0056b3;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+        header h1 {
+            margin: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center; /* Center the content */
+        }
+        .event-title {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .event-date {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .event-description {
+            font-size: 1.1em;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .event-venue {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .cta-button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 1.2em;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .cta-button:hover {
+            background-color: #218838;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+        }
+        .event-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+
+        /* Registration Form Styles */
+        .registration-form {
+            background-color: #ffffff;
+            padding: 30px;
+            margin-top: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        .registration-form input,
+        .registration-form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .registration-form button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .registration-form button:hover {
+            background-color: #218838;
+        }
+
+        .registration-form label {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .registration-form input[type="text"],
+        .registration-form input[type="email"],
+        .registration-form input[type="tel"] {
+            font-size: 1em;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Event at LPU - Lovely Professional University</h1>
+</header>
+
+<div class="container">
+    <h2 class="event-title">Innovative Tech Fest 2025</h2>
+    <p class="event-date">Date: 15th February 2025</p>
+
+    <!-- Centered Image -->
+    <img src="MainAfter.jpg" alt="Innovative Tech Fest" class="event-image">
+
+    <p class="event-description">
+        Join us for the most awaited event of the year – the Innovative Tech Fest 2025 at LPU! This event will showcase
+        the latest technological advancements, with workshops, seminars, and a tech exhibition featuring top innovators.
+        Whether you're a tech enthusiast or a student aiming to enhance your skills, this event is for you!
+    </p>
+
+    <p class="event-venue">
+        Venue: Lovely Professional University, Phagwara, Punjab
+    </p>
+
+    <a href="register.html" class="cta-button">Register Now</a>
+
+    <!-- Registration Form -->
+    <div class="registration-form">
+        <h3>Register for the Event</h3>
+        <form action="submit_form.php" method="POST">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required placeholder="Enter your full name">
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required placeholder="Enter your email address">
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
+
+            <button type="submit">Submit Registration</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 LPU Events | All Rights Reserved</p>
+</footer>
+
+</body>
+</html>
