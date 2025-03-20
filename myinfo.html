@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayush's Portfolio</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #454757;
+            color: #d1d5db;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #444654;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        nav {
+            background-color: #202123;
+            padding: 10px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #d1d5db;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #3b3e4c;
+        }
+
+        .profile {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .profile img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid #4b5563;
+            margin-bottom: 10px;
+        }
+
+        section {
+            margin: 20px 0;
+            padding: 20px;
+        }
+
+        .skills ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+        }
+
+        .skills ul li {
+            background-color: #3b3e4c;
+            color: #d1d5db;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .platforms ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .platforms ul li {
+            margin: 10px;
+        }
+
+        .platforms ul li a {
+            text-decoration: none;
+            color: #d1d5db;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .platforms ul li a:hover {
+            color: #10b981;
+        }
+
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #4b5563;
+            border-radius: 5px;
+            background-color: #3b3e4c;
+            color: #d1d5db;
+        }
+
+        .contact-form button {
+            background-color: #10b981;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .contact-form button:hover {
+            background-color: #059669;
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#about">About Me</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="profile">
+        <img src="MainAfter.jpg" alt="Profile Photo">
+        <h1>Ayush's Portfolio</h1>
+        <p>Frontend Developer | Aspiring Software Engineer</p>
+    </div>
+
+    <section id="about" class="container">
+        <h2>About Me</h2>
+        <p>
+            I am Ayush, a passionate frontend developer, creating responsive and interactive websites. 
+            Currently pursuing Computer Science Engineering at LPU, I aim to bridge design and functionality 
+            to deliver excellent user experiences.
+        </p>
+    </section>
+
+    <section id="skills" class="container">
+        <h2>Skills</h2>
+        <ul class="skills">
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JavaScript</li>
+            <li>React.js</li>
+            <li>Git/GitHub</li>
+        </ul>
+    </section>
+
+    <section id="projects" class="container">
+        <h2>Projects</h2>
+        <ul>
+            <li><strong>Portfolio Website:</strong> Personal website showcasing my skills and projects.</li>
+            <li><strong>E-commerce Store:</strong> Built a responsive, user-friendly e-commerce platform.</li>
+            <li><strong>Blog Platform:</strong> Designed and developed a blogging website with dynamic content.</li>
+        </ul>
+    </section>
+
+   
+    <section id="platforms" class="container">
+        <h2>Find Me On</h2>
+        <ul>
+            <li><a href="https://www.linkedin.com/" target="_blank">LinkedIn</a></li>
+            <li><a href="https://github.com/" target="_blank">GitHub</a></li>
+            <li><a href="https://twitter.com/" target="_blank">Twitter</a></li>
+            <li><a href="https://instagram.com/" target="_blank">Instagram</a></li>
+        </ul>
+    </section>
+
+    
+    <section id="contact" class="container">
+        <h2>Contact Me</h2>
+        <form class="contact-form">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Admission Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4);
+            background-size: 300% 300%;
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left top; }
+            100% { background-position: right bottom; }
+        }
+
+        .container {
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #ff758c;
+            outline: none;
+            box-shadow: 0 0 5px rgba(255, 117, 140, 0.3);
+        }
+
+        .error {
+            color: #ff4d6d;
+            font-size: 12px;
+            display: none;
+            text-align: left;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff758c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #ff4d6d;
+        }
+
+        #info {
+            margin-top: 20px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        #totalMarks, #percentage {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #profilePicPreview {
+            margin-top: 10px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: none;
+            border: 2px solid #ff758c;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admission Form</h1>
+        <form id="admissionForm" onsubmit="event.preventDefault(); displayInfo();">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+                <span class="error" id="nameError">Please enter a valid name</span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                <span class="error" id="emailError">Please enter a valid email</span>
+            </div>
+
+            <div class="form-group">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" required>
+                <span class="error" id="dobError">Must be at least 15 years old</span>
+            </div>
+
+            <div class="form-group">
+                <label>Gender:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="gender" value="Male" required> Male</label>
+                    <label><input type="radio" name="gender" value="Female"> Female</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="profilePic">Profile Picture:</label>
+                <input type="file" id="profilePic" accept="image/*" onchange="previewProfilePic(event)">
+                <img id="profilePicPreview" alt="Profile preview">
+                <span class="error" id="picError">File must be less than 2MB</span>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" id="address" maxlength="100" oninput="updateCharCount()">
+                <p id="addressCounter">0/100</p>
+            </div>
+
+            <div class="form-group">
+                <label for="contact">Contact:</label>
+                <input type="tel" id="contact" pattern="[0-9]{10}" required>
+                <span class="error" id="contactError">Enter 10-digit phone number</span>
+            </div>
+
+            <div class="form-group">
+                <label for="course">Course:</label>
+                <select id="course" required>
+                    <option value="" disabled selected>Select a course</option>
+                    <option value="CSE">Computer Science</option>
+                    <option value="ECE">Electronics</option>
+                    <option value="ME">Mechanical</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="marks10">Marks in 10th (out of 100):</label>
+                <input type="number" id="marks10" min="0" max="100" oninput="calculateMarks()" required>
+                <span class="error" id="marks10Error">Marks must be between 0-100</span>
+            </div>
+
+            <div class="form-group">
+                <label for="marks12">Marks in 12th (out of 100):</label>
+                <input type="number" id="marks12" min="0" max="100" oninput="calculateMarks()" required>
+                <span class="error" id="marks12Error">Marks must be between 0-100</span>
+            </div>
+
+            <p id="totalMarks"></p>
+            <p id="percentage"></p>
+            
+            <button type="submit">Submit</button>
+            <button type="button" onclick="resetForm()">Reset</button>
+        </form>
+        <div id="info"></div>
+    </div>
+
+    <script>
+        function calculateMarks() {
+            const marks10 = parseFloat(document.getElementById('marks10').value) || 0;
+            const marks12 = parseFloat(document.getElementById('marks12').value) || 0;
+            
+            if (marks10 > 100 || marks10 < 0) {
+                document.getElementById('marks10Error').style.display = 'block';
+                return;
+            }
+            if (marks12 > 100 || marks12 < 0) {
+                document.getElementById('marks12Error').style.display = 'block';
+                return;
+            }
+
+            const totalMarks = marks10 + marks12;
+            const percentage = (totalMarks / 200) * 100;
+            
+            document.getElementById('totalMarks').textContent = `Total Marks: ${totalMarks}`;
+            document.getElementById('percentage').textContent = `Percentage: ${percentage.toFixed(2)}%`;
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const contactRegex = /^[0-9]{10}$/;
+
+            // Email validation
+            const email = document.getElementById('email').value;
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Age validation
+            const dob = new Date(document.getElementById('dob').value);
+            const today = new Date();
+            const age = today.getFullYear() - dob.getFullYear();
+            if (age < 15) {
+                document.getElementById('dobError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Contact validation
+            const contact = document.getElementById('contact').value;
+            if (!contactRegex.test(contact)) {
+                document.getElementById('contactError').style.display = 'block';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function displayInfo() {
+            if (!validateForm()) return;
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                dob: document.getElementById('dob').value,
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                address: document.getElementById('address').value,
+                contact: document.getElementById('contact').value,
+                course: document.getElementById('course').value,
+                marks10: document.getElementById('marks10').value,
+                marks12: document.getElementById('marks12').value
+            };
+
+            calculateMarks();
+
+            document.getElementById('info').innerHTML = `
+                <p><strong>Name:</strong> ${formData.name}</p>
+                <p><strong>Email:</strong> ${formData.email}</p>
+                <p><strong>Date of Birth:</strong> ${formData.dob}</p>
+                <p><strong>Gender:</strong> ${formData.gender}</p>
+                <p><strong>Address:</strong> ${formData.address}</p>
+                <p><strong>Contact:</strong> ${formData.contact}</p>
+                <p><strong>Course:</strong> ${formData.course}</p>
+                <p><strong>Marks in 10th:</strong> ${formData.marks10}</p>
+                <p><strong>Marks in 12th:</strong> ${formData.marks12}</p>
+            `;
+        }
+
+        function resetForm() {
+            document.getElementById('admissionForm').reset();
+            document.getElementById('info').innerHTML = '';
+            document.getElementById('totalMarks').textContent = '';
+            document.getElementById('percentage').textContent = '';
+            document.getElementById('profilePicPreview').style.display = 'none';
+            document.getElementById('profilePicPreview').src = '';
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+        }
+
+        function updateCharCount() {
+            const addressField = document.getElementById('address');
+            document.getElementById('addressCounter').textContent = `${addressField.value.length}/100`;
+        }
+
+        function previewProfilePic(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                    document.getElementById('picError').style.display = 'block';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const output = document.getElementById('profilePicPreview');
+                    output.src = e.target.result;
+                    output.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>
