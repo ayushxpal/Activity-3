@@ -1,9 +1,9 @@
-console.log("This is a new page");
-// function greet()
-//          {
-//             a=10;
-//             b=20;
-//             c=a+b;
-//             alert(c);
-//                 // alert("welcome to webpage");
-//          }
+result=confirm("do you want to procees");
+if(result)
+{
+    console.log("you have clicked ok");
+}
+else
+{
+    console.log("you have clicked cancel");
+}
