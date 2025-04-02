@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple DOM Manipulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #box {
+            width: 200px;
+            height: 100px;
+            background-color: lightcoral;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: background-color 0.5s, display 0.5s;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Simple DOM Manipulation</h2>
+    <div id="box">Hello!</div>
+
+    <button onclick="changeText()">Change Text</button>
+    <button onclick="changeColor()">Change Color</button>
+    <button onclick="toggleBox()">Hide/Show</button>
+
+    <script>
+        function changeText() {
+            document.getElementById('box').textContent = 'Goodbye!';
+        }
+
+        function changeColor() {
+            document.getElementById('box').style.backgroundColor = 'lightblue';
+        }
+
+        function toggleBox() {
+            let box = document.getElementById('box');
+            box.style.display = box.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+
+</body>
+</html>

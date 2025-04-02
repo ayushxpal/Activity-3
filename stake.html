@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stake - Premium Gambling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #171717;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, #2c2c2c, #1f1f1f);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00cc00;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 2rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.1);
+            color: #00cc00;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 6rem auto 2rem;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .betting-area, .sidebar {
+            background: #222;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .betting-area {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bet-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input {
+            padding: 0.8rem;
+            border: 1px solid #333;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+            background: #2a2a2a;
+            color: #fff;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00cc00;
+        }
+
+        button {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .bet-btn {
+            background: #00cc00;
+            color: #fff;
+        }
+
+        .bet-btn:hover {
+            background: #00b300;
+            transform: translateY(-2px);
+        }
+
+        .reset-btn {
+            background: #555;
+            color: #fff;
+        }
+
+        .reset-btn:hover {
+            background: #666;
+            transform: translateY(-2px);
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #2a2a2a;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .balance {
+            background: #2a2a2a;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .balance:hover, #result:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .bet-history-item {
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            background: #2a2a2a;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .bet-history-item:hover {
+            transform: translateX(5px);
+        }
+
+        footer {
+            background: #1f1f1f;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+            color: #888;
+        }
+
+        .game-modes {
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .mode-btn {
+            background: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .mode-btn.active {
+            background: #00cc00;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Stake</div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Casino</a>
+            <a href="#">Sports</a>
+            <a href="#">Promotions</a>
+            <a href="#">VIP</a>
+            <a href="#">Profile</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="betting-area">
+            <h2>Place Your Bet</h2>
+            <div class="game-modes">
+                <button class="mode-btn active" onclick="switchMode('standard')">Standard</button>
+                <button class="mode-btn" onclick="switchMode('quick')">Quick Bet</button>
+                <button class="mode-btn" onclick="switchMode('auto')">Auto</button>
+            </div>
+            <div class="bet-form">
+                <div class="input-group">
+                    <label>Bet Amount (BTC)</label>
+                    <input type="number" id="betAmount" step="0.0001" min="0.0001" value="0.001">
+                </div>
+                <div class="input-group">
+                    <label>Multiplier</label>
+                    <input type="number" id="multiplier" step="0.1" min="1.1" value="2.0">
+                </div>
+                <div class="input-group">
+                    <button class="bet-btn" onclick="placeBet()">Place Bet</button>
+                </div>
+                <div class="input-group">
+                    <button class="reset-btn" onclick="resetForm()">Reset</button>
+                </div>
+            </div>
+            <div id="result"></div>
+        </div>
+
+        <div class="sidebar">
+            <div class="balance">
+                <h3>Balance</h3>
+                <p id="userBalance">0.0500 BTC</p>
+                <button class="bet-btn" onclick="deposit()">Deposit</button>
+            </div>
+            <h3>Recent Bets</h3>
+            <div id="betHistory"></div>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 Stake. All rights reserved. | 18+ | Gamble Responsibly
+    </footer>
+
+    <script>
+        let balance = 0.0500;
+        const betHistory = [];
+        let currentMode = 'standard';
+        let autoBetInterval = null;
+
+        function switchMode(mode) {
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            currentMode = mode;
+            
+            if (mode === 'auto' && !autoBetInterval) {
+                autoBetInterval = setInterval(placeBet, 2000);
+            } else if (mode !== 'auto' && autoBetInterval) {
+                clearInterval(autoBetInterval);
+                autoBetInterval = null;
+            }
+        }
+
+        function placeBet() {
+            const betAmount = parseFloat(document.getElementById('betAmount').value);
+            const multiplier = parseFloat(document.getElementById('multiplier').value);
+            const resultDiv = document.getElementById('result');
+            const balanceDiv = document.getElementById('userBalance');
+            const historyDiv = document.getElementById('betHistory');
+
+            if (!betAmount || !multiplier || betAmount <= 0 || multiplier < 1.1) {
+                resultDiv.innerHTML = 'Please enter valid bet amount and multiplier';
+                return;
+            }
+
+            if (betAmount > balance) {
+                resultDiv.innerHTML = 'Insufficient balance';
+                return;
+            }
+
+            const random = Math.random();
+            const winChance = currentMode === 'quick' ? 0.6 : 0.45;
+
+            if (random < winChance) {
+                const winnings = betAmount * multiplier;
+                balance += winnings - betAmount;
+                resultDiv.innerHTML = `<span style="color: #00cc00">You won ${winnings.toFixed(4)} BTC!</span>`;
+                betHistory.push(`Won ${winnings.toFixed(4)} BTC (x${multiplier})`);
+            } else {
+                balance -= betAmount;
+                resultDiv.innerHTML = `<span style="color: #ff4444">You lost ${betAmount.toFixed(4)} BTC</span>`;
+                betHistory.push(`Lost ${betAmount.toFixed(4)} BTC`);
+            }
+
+            balanceDiv.innerHTML = `${balance.toFixed(4)} BTC`;
+            historyDiv.innerHTML = betHistory.slice(-5)
+                .map(bet => `<div class="bet-history-item">${bet}</div>`)
+                .join('');
+
+            if (currentMode === 'quick') resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('betAmount').value = '0.001';
+            document.getElementById('multiplier').value = '2.0';
+            document.getElementById('result').innerHTML = '';
+        }
+
+        function deposit() {
+            const amount = prompt('Enter deposit amount (BTC):');
+            if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+                balance += parseFloat(amount);
+                document.getElementById('userBalance').innerHTML = `${balance.toFixed(4)} BTC`;
+            }
+        }
+
+        // Initial setup
+        resetForm();
+    </script>
+</body>
+</html>

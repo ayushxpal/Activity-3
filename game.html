@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Human Run Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #game {
+            position: relative;
+            width: 600px;
+            height: 200px;
+            background-color: #fff;
+            border: 2px solid #000;
+            overflow: hidden;
+        }
+        #human {
+            position: absolute;
+            bottom: 0;
+            width: 50px;
+            height: 50px;
+            background-color: black;
+        }
+        .obstacle, .fireShot, .booster {
+            position: absolute;
+            bottom: 0;
+            width: 20px;
+            height: 50px;
+        }
+        .obstacle {
+            background-color: red;
+        }
+        .fireShot {
+            background-color: orange;
+            height: 20px;
+            bottom: auto;
+            top: 50px;
+        }
+        .booster {
+            background-color: green;
+            height: 30px;
+        }
+        #startScreen, #gameOverScreen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+        }
+        #gameOverScreen {
+            display: none;
+            flex-direction: column;
+        }
+        #gameOverScreen button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <div id="startScreen">Click to Start</div>
+        <div id="gameOverScreen">
+            <div>Game Over! Your Score: <span id="finalScore"></span></div>
+            <button onclick="restartGame()">Restart</button>
+        </div>
+        <div id="score">Score: 0</div>
+        <div id="human"></div>
+    </div>
+    <script>
+        const human = document.getElementById('human');
+        const game = document.getElementById('game');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const scoreDisplay = document.getElementById('score');
+        const finalScore = document.getElementById('finalScore');
+
+        let isJumping = false;
+        let gravity = 0.5;
+        let position = 0;
+        let score = 0;
+        let gameInterval;
+        let velocity = 0;
+        let speed = 3; // Default speed
+        let boosterActive = false;
+
+        function jump() {
+            if (isJumping) return;
+            isJumping = true;
+            velocity = 10;
+
+            let jumpTimer = setInterval(() => {
+                if (velocity <= 0 && position <= 0) {
+                    clearInterval(jumpTimer);
+                    isJumping = false;
+                    position = 0;
+                } else {
+                    position += velocity;
+                    velocity -= gravity;
+                    human.style.bottom = position + 'px';
+                }
+            }, 20);
+        }
+
+        function generateObstacle() {
+            let obstacleType = Math.random() < 0.5 ? 'obstacle' : 'fireShot';
+            let obstacle = document.createElement('div');
+            obstacle.classList.add(obstacleType);
+            obstacle.style.left = '600px';
+            game.appendChild(obstacle);
+
+            let obstaclePosition = 600;
+            let moveObstacle = setInterval(() => {
+                if (obstaclePosition < 50 && obstaclePosition > 0 && position < 50 && obstacleType === 'obstacle') {
+                    clearInterval(moveObstacle);
+                    endGame();
+                }
+
+                if (obstaclePosition < 50 && obstaclePosition > 0 && position > 30 && obstacleType === 'fireShot') {
+                    clearInterval(moveObstacle);
+                    endGame();
+                }
+
+                if (obstaclePosition <= 0) {
+                    clearInterval(moveObstacle);
+                    game.removeChild(obstacle);
+                }
+
+                obstaclePosition -= speed;
+                obstacle.style.left = obstaclePosition + 'px';
+            }, 20);
+
+            let randomTime = Math.random() * 4000 + 2000;
+            setTimeout(generateObstacle, randomTime);
+        }
+
+        function generateBooster() {
+            let booster = document.createElement('div');
+            booster.classList.add('booster');
+            booster.style.left = '600px';
+            game.appendChild(booster);
+
+            let boosterPosition = 600;
+            let moveBooster = setInterval(() => {
+                if (boosterPosition < 50 && boosterPosition > 0 && position < 50) {
+                    clearInterval(moveBooster);
+                    game.removeChild(booster);
+                    activateBooster();
+                }
+
+                if (boosterPosition <= 0) {
+                    clearInterval(moveBooster);
+                    game.removeChild(booster);
+                }
+
+                boosterPosition -= speed;
+                booster.style.left = boosterPosition + 'px';
+            }, 20);
+
+            let randomTime = Math.random() * 8000 + 5000;
+            setTimeout(generateBooster, randomTime);
+        }
+
+        function activateBooster() {
+            if (boosterActive) return;
+            boosterActive = true;
+            speed = 6; // Increase speed
+            setTimeout(() => {
+                speed = 3; // Reset speed
+                boosterActive = false;
+            }, 5000); // Booster lasts for 5 seconds
+        }
+
+        function startGame() {
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            score = 0;
+            scoreDisplay.textContent = 'Score: ' + score;
+            gameInterval = setInterval(() => {
+                score++;
+                scoreDisplay.textContent = 'Score: ' + score;
+            }, 100);
+            generateObstacle();
+            generateBooster();
+            document.addEventListener('keydown', jump);
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            document.removeEventListener('keydown', jump);
+            finalScore.textContent = score;
+            gameOverScreen.style.display = 'flex';
+        }
+
+        function restartGame() {
+            location.reload();
+        }
+
+        startScreen.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
