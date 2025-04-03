@@ -34,7 +34,7 @@
         }
 
         button {
-            background-color: #0056b3;
+            background-color: #200fb6;
             color: #fff;
             border: none;
             padding: 12px 25px;
@@ -79,7 +79,8 @@
     </div>
 
     <script>
-        const API_KEY = 'YOUR_OPENCAGE_API_KEY'; // Replace with your OpenCage API key
+        // Replace this with your actual OpenCage API key
+        const API_KEY = '7256dd3050794c6e9f2fc68e9237b573'; // Get one from https://opencagedata.com/
 
         function getLocation() {
             const errorElement = document.getElementById("error");
@@ -103,21 +104,30 @@
         }
 
         function fetchAddress(lat, lon) {
-            const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${API_KEY}`;
+            const addressElement = document.getElementById("address");
+            addressElement.innerText = "Fetching address..."; // Show progress
+
+            const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${API_KEY}&language=en&pretty=1`;
 
             fetch(url)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    const addressElement = document.getElementById("address");
+                    console.log("API Response:", data); // Debug: Check the response in the console
                     if (data.results && data.results.length > 0) {
-                        addressElement.innerText = data.results[0].formatted;
+                        addressElement.innerText = data.results[0].formatted || "No formatted address available.";
                     } else {
-                        addressElement.innerText = "Unable to fetch address.";
+                        addressElement.innerText = "No address found.";
                     }
                 })
                 .catch(error => {
-                    document.getElementById("address").innerText = "Error fetching address.";
-                    console.error("Error fetching address:", error);
+                    addressElement.innerText = "Error fetching address.";
+                    document.getElementById("error").innerText = `Fetch error: ${error.message}`;
+                    console.error("Fetch error:", error);
                 });
         }
 
