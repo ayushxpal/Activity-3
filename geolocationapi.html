@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geolocation Finder</title>
+    <title>Geolocation Finder with Map</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: #f8f9fa;
+            color: #212529;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,43 +20,45 @@
         }
 
         .location-container {
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 450px;
+            max-width: 500px;
             width: 100%;
         }
 
         h1 {
             margin-bottom: 20px;
-            color: #0056b3;
-            font-size: 24px;
+            color: #007bff;
+            font-size: 26px;
         }
 
         button {
-            background-color: #200fb6;
-            color: #fff;
+            background-color: #007bff;
+            color: #ffffff;
             border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
+            padding: 12px 30px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s ease;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
         button:hover {
-            background-color: #003d80;
+            background-color: #0056b3;
+            transform: scale(1.05);
         }
 
         #locationInfo p {
             margin: 10px 0;
-            font-size: 15px;
+            font-size: 16px;
         }
 
         .error-message {
-            color: #d9534f;
+            color: #dc3545;
             margin-top: 15px;
             font-size: 14px;
         }
@@ -63,11 +67,19 @@
             font-style: italic;
             color: #6c757d;
         }
+
+        #map {
+            height: 250px;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
     </style>
 </head>
 <body>
     <div class="location-container">
-        <h1>Geolocation Finder</h1>
+        <h1>Geolocation Finder with Map</h1>
         <button onclick="getLocation()">Find My Location</button>
         <div id="locationInfo">
             <p>Latitude: <span id="lat" class="loading">Waiting...</span></p>
@@ -75,16 +87,25 @@
             <p>Accuracy: <span id="acc" class="loading">Waiting...</span></p>
             <p>Address: <span id="address" class="loading">Waiting...</span></p>
         </div>
+        <div id="map"></div>
         <div id="error" class="error-message"></div>
     </div>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Replace this with your actual OpenCage API key
-        const API_KEY = '7256dd3050794c6e9f2fc68e9237b573'; // Get one from https://opencagedata.com/
+        const API_KEY = '7256dd3050794c6e9f2fc68e9237b573'; // Replace with your OpenCage API key
+
+        let map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let marker = null;
 
         function getLocation() {
             const errorElement = document.getElementById("error");
-            errorElement.innerText = ""; // Clear previous errors
+            errorElement.innerText = "";
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -100,12 +121,19 @@
             document.getElementById("lon").innerText = lon.toFixed(6);
             document.getElementById("acc").innerText = `${acc.toFixed(2)} meters`;
 
+            map.setView([lat, lon], 13);
+            if (marker) {
+                marker.setLatLng([lat, lon]);
+            } else {
+                marker = L.marker([lat, lon]).addTo(map);
+            }
+
             fetchAddress(lat, lon);
         }
 
         function fetchAddress(lat, lon) {
             const addressElement = document.getElementById("address");
-            addressElement.innerText = "Fetching address..."; // Show progress
+            addressElement.innerText = "Fetching address...";
 
             const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${API_KEY}&language=en&pretty=1`;
 
@@ -117,9 +145,9 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log("API Response:", data); // Debug: Check the response in the console
                     if (data.results && data.results.length > 0) {
                         addressElement.innerText = data.results[0].formatted || "No formatted address available.";
+                        marker.bindPopup(data.results[0].formatted).openPopup();
                     } else {
                         addressElement.innerText = "No address found.";
                     }
@@ -127,7 +155,6 @@
                 .catch(error => {
                     addressElement.innerText = "Error fetching address.";
                     document.getElementById("error").innerText = `Fetch error: ${error.message}`;
-                    console.error("Fetch error:", error);
                 });
         }
 
