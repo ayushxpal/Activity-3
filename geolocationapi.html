@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .location-container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #0056b3;
+            font-size: 24px;
+        }
+
+        button {
+            background-color: #0056b3;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #003d80;
+        }
+
+        #locationInfo p {
+            margin: 10px 0;
+            font-size: 15px;
+        }
+
+        .error-message {
+            color: #d9534f;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .loading {
+            font-style: italic;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="location-container">
+        <h1>Geolocation Finder</h1>
+        <button onclick="getLocation()">Find My Location</button>
+        <div id="locationInfo">
+            <p>Latitude: <span id="lat" class="loading">Waiting...</span></p>
+            <p>Longitude: <span id="lon" class="loading">Waiting...</span></p>
+            <p>Accuracy: <span id="acc" class="loading">Waiting...</span></p>
+            <p>Address: <span id="address" class="loading">Waiting...</span></p>
+        </div>
+        <div id="error" class="error-message"></div>
+    </div>
+
+    <script>
+        const API_KEY = 'YOUR_OPENCAGE_API_KEY'; // Replace with your OpenCage API key
+
+        function getLocation() {
+            const errorElement = document.getElementById("error");
+            errorElement.innerText = ""; // Clear previous errors
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                errorElement.innerText = "Geolocation is not supported by your browser.";
+            }
+        }
+
+        function showPosition(position) {
+            const { latitude: lat, longitude: lon, accuracy: acc } = position.coords;
+
+            document.getElementById("lat").innerText = lat.toFixed(6);
+            document.getElementById("lon").innerText = lon.toFixed(6);
+            document.getElementById("acc").innerText = `${acc.toFixed(2)} meters`;
+
+            fetchAddress(lat, lon);
+        }
+
+        function fetchAddress(lat, lon) {
+            const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${API_KEY}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const addressElement = document.getElementById("address");
+                    if (data.results && data.results.length > 0) {
+                        addressElement.innerText = data.results[0].formatted;
+                    } else {
+                        addressElement.innerText = "Unable to fetch address.";
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("address").innerText = "Error fetching address.";
+                    console.error("Error fetching address:", error);
+                });
+        }
+
+        function showError(error) {
+            const errorElement = document.getElementById("error");
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    errorElement.innerText = "Permission denied. Please allow location access.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorElement.innerText = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    errorElement.innerText = "The request to get location timed out.";
+                    break;
+                default:
+                    errorElement.innerText = "An unknown error occurred.";
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
