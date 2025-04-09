@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taste Haven - Fine Dining Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            position: relative;
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background with opacity */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1517248135467-2c7ed3ab7229?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center;
+            background-size: cover;
+            opacity: 0.75;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 400;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ff5733;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: fadeIn 2s ease-in;
+        }
+
+        .hero p {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .hero .cta {
+            padding: 15px 30px;
+            background: #ff5733;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .hero .cta:hover {
+            background: #c94125;
+        }
+
+        /* Menu Section */
+        .menu-section {
+            padding: 60px 20px;
+            background: #fff;
+            text-align: center;
+        }
+
+        .menu-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            color: #ff5733;
+            margin-bottom: 40px;
+        }
+
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .dish {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .dish:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .dish img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .dish h3 {
+            font-size: 20px;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .dish p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .dish .price {
+            font-weight: bold;
+            color: #ff5733;
+            margin: 10px 0;
+        }
+
+        .dish button {
+            padding: 8px 15px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .dish button:hover {
+            background: #218838;
+        }
+
+        /* Booking Form */
+        #bookingForm {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+        }
+
+        #bookingForm h2 {
+            font-family: 'Playfair Display', serif;
+            color: #ff5733;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #bookingForm input, #bookingForm textarea, #bookingForm select {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #bookingForm textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        #bookingForm button {
+            width: 100%;
+            padding: 12px;
+            background: #ff5733;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #bookingForm button:hover {
+            background: #c94125;
+        }
+
+        #bookingForm .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 60px 20px;
+            background: rgba(245, 245, 245, 0.9);
+            text-align: center;
+        }
+
+        .testimonials h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            color: #ff5733;
+            margin-bottom: 40px;
+        }
+
+        .testimonial {
+            max-width: 600px;
+            margin: 20px auto;
+            font-style: italic;
+            color: #666;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #ff5733;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        footer a:hover {
+            color: #c94125;
+        }
+
+        /* Back to Top */
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff5733;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: none;
+            transition: background 0.3s;
+        }
+
+        #backToTop:hover {
+            background: #c94125;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 40px; }
+            .hero p { font-size: 18px; }
+            .dish { width: 100%; max-width: 300px; }
+            nav ul { flex-direction: column; padding: 10px 0; }
+            nav ul li { margin: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#" onclick="openBookingForm()">Book a Table</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>Welcome to Taste Haven</h1>
+        <p>Indulge in a culinary journey like no other</p>
+        <button class="cta" onclick="openBookingForm()">Reserve Your Table</button>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu-section" id="menu">
+        <h2>Our Menu</h2>
+        <div class="menu">
+            <div class="dish">
+                <img src="https://images.unsplash.com/photo-1513106580091-1d82408b8cd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Pizza">
+                <h3>Pizza Margherita</h3>
+                <p>Fresh tomatoes, mozzarella, basil</p>
+                <p class="price">$12</p>
+                <button onclick="alert('Added to cart!')">Order for Pickup</button>
+            </div>
+            <div class="dish">
+                <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Pasta">
+                <h3>Spaghetti Carbonara</h3>
+                <p>Creamy sauce, pancetta, parmesan</p>
+                <p class="price">$15</p>
+                <button onclick="alert('Added to cart!')">Order for Pickup</button>
+            </div>
+            <div class="dish">
+                <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Burger">
+                <h3>Classic Burger</h3>
+                <p>Beef patty, lettuce, tomato, cheese</p>
+                <p class="price">$10</p>
+                <button onclick="alert('Added to cart!')">Order for Pickup</button>
+            </div>
+            <div class="dish">
+                <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Salad">
+                <h3>Caesar Salad</h3>
+                <p>Crisp romaine, croutons, dressing</p>
+                <p class="price">$8</p>
+                <button onclick="alert('Added to cart!')">Order for Pickup</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="about">
+        <h2>What Our Guests Say</h2>
+        <div class="testimonial">
+            <p>"The best dining experience I've ever had! The food was exquisite."</p>
+            <p><strong>- Jane Doe</strong></p>
+        </div>
+        <div class="testimonial">
+            <p>"A perfect blend of ambiance and flavor. Highly recommend!"</p>
+            <p><strong>- John Smith</strong></p>
+        </div>
+    </section>
+
+    <!-- Booking Form -->
+    <div id="bookingForm">
+        <button class="close-btn" onclick="closeBookingForm()">✖</button>
+        <h2>Book Your Table</h2>
+        <form id="booking-form" onsubmit="submitForm(event)">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="text" id="address" placeholder="Address" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="tel" id="contact" placeholder="Contact Number" required>
+            <input type="datetime-local" id="datetime" required>
+            <textarea id="instructions" placeholder="Any Special Instructions"></textarea>
+            <button type="submit" onmouseover="hoverSubmit(this)">Submit</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <p>Contact Us: (123) 456-7890 | info@tastehaven.com</p>
+        <p>123 Flavor Street, Culinary City</p>
+        <p>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+        </p>
+        <p>&copy; 2025 Taste Haven. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Back to Top -->
+    <button id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Booking Form Functions
+        function openBookingForm() {
+            document.getElementById('bookingForm').style.display = 'block';
+        }
+
+        function closeBookingForm() {
+            document.getElementById('bookingForm').style.display = 'none';
+            document.getElementById('booking-form').reset();
+            document.querySelector('#bookingForm h2').innerText = 'Book Your Table';
+        }
+
+        function hoverSubmit(button) {
+            button.style.background = '#e04b2a';
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            alert('Welcome, table booked!');
+            document.querySelector('#bookingForm h2').innerText = 'Booking Done';
+            setTimeout(closeBookingForm, 2000); // Auto-close after 2 seconds
+        }
+
+        // Back to Top
+        window.onscroll = function() {
+            const backToTop = document.getElementById('backToTop');
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
