@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Coin Toss Showdown</title>
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e1e2f, #2a2a4a);
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+        h1 {
+            color: #ffcc00;
+            font-size: 3em;
+            text-shadow: 0 0 10px #ffcc00;
+            margin-top: 20px;
+        }
+        .game-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+        }
+        .coin {
+            margin: 20px auto;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f9d835, #f7c600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .coin.tossing {
+            animation: flip 1.5s ease-in-out;
+        }
+        @keyframes flip {
+            0% { transform: rotateY(0deg) scale(1); }
+            50% { transform: rotateY(1080deg) scale(1.2); }
+            100% { transform: rotateY(2160deg) scale(1); }
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 1.2em;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #ffcc00;
+            color: #1e1e2f;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        button:hover {
+            background: #e6b800;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+        .result, .stats {
+            font-size: 1.8em;
+            margin: 20px 0;
+            text-shadow: 0 0 5px #fff;
+        }
+        .power-ups {
+            margin: 20px 0;
+        }
+        .power-up-btn {
+            background: #00ccff;
+            color: #fff;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+        .power-up-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .leaderboard, .achievements {
+            margin: 30px auto;
+            max-width: 500px;
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+        }
+        .leaderboard h2, .achievements h2 {
+            color: #ffcc00;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+        .achievement-locked {
+            color: #666;
+        }
+        .achievement-unlocked {
+            color: #00ff00;
+        }
+        .streak-bar {
+            width: 200px;
+            height: 20px;
+            background: #444;
+            border-radius: 10px;
+            margin: 10px auto;
+            overflow: hidden;
+        }
+        .streak-fill {
+            height: 100%;
+            background: linear-gradient(to right, #ff3300, #ffcc00);
+            transition: width 0.5s;
+        }
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="game-container">
+        <h1>Ultimate Coin Toss Showdown</h1>
+        <p>Test your luck and skill! Guess: Heads or Tails</p>
+        <div class="coin" id="coin">?</div>
+        <button onclick="guess('Heads')">Heads</button>
+        <button onclick="guess('Tails')">Tails</button>
+        <button onclick="restartGame()">Restart</button>
+
+        <div class="power-ups">
+            <button class="power-up-btn" id="doubleScore" onclick="usePowerUp('doubleScore')">Double Score (10)</button>
+            <button class="power-up-btn" id="extraLife" onclick="usePowerUp('extraLife')">Extra Life (15)</button>
+            <button class="power-up-btn" id="hint" onclick="usePowerUp('hint')">Hint (5)</button>
+        </div>
+
+        <div class="result" id="result"></div>
+        <div class="stats" id="lives">Lives: 5</div>
+        <div class="stats" id="score">Score: 0</div>
+        <div class="stats" id="streak">Streak: 0</div>
+        <div class="streak-bar"><div class="streak-fill" id="streakFill"></div></div>
+
+        <div class="leaderboard">
+            <h2>Leaderboard</h2>
+            <ul id="leaderboard"></ul>
+        </div>
+
+        <div class="achievements">
+            <h2>Achievements</h2>
+            <ul id="achievements"></ul>
+        </div>
+    </div>
+
+    <audio id="flipSound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
+    <audio id="winSound" src="https://www.soundjay.com/buttons/beep-07a.mp3"></audio>
+    <audio id="loseSound" src="https://www.soundjay.com/buttons/beep-08b.mp3"></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // Load Google Font
+        const link = document.createElement('link');
+        link.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap';
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+
+        // Game State
+        let lives = 5;
+        let score = 0;
+        let streak = 0;
+        let coins = 0;
+        let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        let achievements = {
+            'firstWin': { name: 'First Win', desc: 'Win your first toss', unlocked: false },
+            'streak5': { name: 'Hot Streak', desc: 'Get a streak of 5', unlocked: false },
+            'score100': { name: 'Centurion', desc: 'Reach 100 points', unlocked: false },
+            'master': { name: 'Coin Master', desc: 'Reach 500 points', unlocked: false }
+        };
+
+        // Sounds
+        const flipSound = document.getElementById('flipSound');
+        const winSound = document.getElementById('winSound');
+        const loseSound = document.getElementById('loseSound');
+
+        // Particles
+        particlesJS('particles', {
+            particles: {
+                number: { value: 50 },
+                color: { value: '#ffcc00' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5 },
+                size: { value: 3 },
+                move: { enable: true, speed: 2 }
+            }
+        });
+
+        function guess(userGuess) {
+            if (lives <= 0) {
+                document.getElementById('result').textContent = "Game Over! Restart to play again.";
+                return;
+            }
+
+            const coin = document.getElementById('coin');
+            coin.classList.add('tossing');
+            flipSound.play();
+
+            setTimeout(() => {
+                const tossResult = Math.random() < 0.5 ? 'Heads' : 'Tails';
+                coin.textContent = tossResult === 'Heads' ? 'H' : 'T';
+                coin.classList.remove('tossing');
+
+                let scoreMultiplier = 1;
+                if (userGuess === tossResult) {
+                    streak++;
+                    score += 10 * streak * scoreMultiplier;
+                    lives = Math.min(lives + (streak >= 5 ? 1 : 0), 10); // Bonus life at streak 5
+                    coins += streak;
+                    document.getElementById('result').textContent = `Correct! It was ${tossResult}. Streak: ${streak}`;
+                    winSound.play();
+                    checkAchievements();
+                } else {
+                    streak = 0;
+                    lives--;
+                    document.getElementById('result').textContent = `Wrong! It was ${tossResult}.`;
+                    loseSound.play();
+                }
+
+                updateUI();
+                if (lives <= 0) {
+                    endGame();
+                }
+            }, 1500);
+        }
+
+        function usePowerUp(type) {
+            if (type === 'doubleScore' && coins >= 10) {
+                coins -= 10;
+                score *= 2;
+                document.getElementById('doubleScore').disabled = true;
+                setTimeout(() => document.getElementById('doubleScore').disabled = false, 30000);
+            } else if (type === 'extraLife' && coins >= 15) {
+                coins -= 15;
+                lives = Math.min(lives + 1, 10);
+                document.getElementById('extraLife').disabled = true;
+                setTimeout(() => document.getElementById('extraLife').disabled = false, 60000);
+            } else if (type === 'hint' && coins >= 5) {
+                coins -= 5;
+                const hint = Math.random() < 0.5 ? 'Heads' : 'Tails';
+                document.getElementById('result').textContent = `Hint: Could be ${hint}...`;
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('lives').textContent = `Lives: ${lives}`;
+            document.getElementById('score').textContent = `Score: ${score} | Coins: ${coins}`;
+            document.getElementById('streak').textContent = `Streak: ${streak}`;
+            document.getElementById('streakFill').style.width = `${Math.min(streak * 20, 100)}%`;
+        }
+
+        function restartGame() {
+            lives = 5;
+            score = 0;
+            streak = 0;
+            coins = 0;
+            document.getElementById('result').textContent = "";
+            document.getElementById('coin').textContent = "?";
+            updateUI();
+        }
+
+        function endGame() {
+            document.getElementById('result').textContent += " Game Over!";
+            const playerName = prompt("Enter your name for the leaderboard:");
+            if (playerName) {
+                leaderboard.push({ name: playerName, score: score });
+                leaderboard.sort((a, b) => b.score - a.score);
+                leaderboard = leaderboard.slice(0, 5); // Top 5 only
+                localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+                renderLeaderboard();
+            }
+        }
+
+        function renderLeaderboard() {
+            const leaderboardElement = document.getElementById('leaderboard');
+            leaderboardElement.innerHTML = "";
+            leaderboard.forEach((entry, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${index + 1}. ${entry.name} - ${entry.score}`;
+                leaderboardElement.appendChild(li);
+            });
+        }
+
+        function checkAchievements() {
+            if (!achievements.firstWin.unlocked && score >= 10) achievements.firstWin.unlocked = true;
+            if (!achievements.streak5.unlocked && streak >= 5) achievements.streak5.unlocked = true;
+            if (!achievements.score100.unlocked && score >= 100) achievements.score100.unlocked = true;
+            if (!achievements.master.unlocked && score >= 500) achievements.master.unlocked = true;
+            renderAchievements();
+        }
+
+        function renderAchievements() {
+            const achievementsElement = document.getElementById('achievements');
+            achievementsElement.innerHTML = "";
+            for (let key in achievements) {
+                const achievement = achievements[key];
+                const li = document.createElement('li');
+                li.textContent = `${achievement.name}: ${achievement.desc}`;
+                li.className = achievement.unlocked ? 'achievement-unlocked' : 'achievement-locked';
+                achievementsElement.appendChild(li);
+            }
+        }
+
+        // Initialize
+        renderLeaderboard();
+        renderAchievements();
+        updateUI();
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+<style>
+    .one {
+        background-color: aqua;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+    <h2 id="myText">This is a heading</h2>
+    <button id="assBtn">Add class</button>
+    <button id="remBtn">Remove class</button>
+    <button id="togBtn">Toggle class</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#assBtn").click(function() {
+                $("#myText").addClass("one");
+            });
+
+            $("#remBtn").click(function() {
+                $("#myText").removeClass("one");
+            });
+
+            $("#togBtn").click(function() {
+                $("#myText").toggleClass("one");
+            });
+        });
+    </script>
+</body>
+</html>
